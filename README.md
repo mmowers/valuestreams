@@ -8,7 +8,7 @@
 1. Call the function `get_value_streams` (with an optional variable list to filter results to only certain variables): `df = valuestreams.get_value_streams('path_to_gdx_file.gdx', 'path_to_mps_file', optional_var_list)`
 
 # Upgrade package to latest
-1. `pip install --upgrade git+https://github.com/mmowers/valuestreams.git@master`
+1. `pip install --upgrade valuestreams`
 
 # Uninstall package
 1. `pip uninstall valuestreams`
