@@ -1,0 +1,6 @@
+*.pyc
+*.cache
+MANIFEST
+dist
+build
+.pytest_cache
