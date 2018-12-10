@@ -1,6 +1,6 @@
 *.pyc
 *.cache
-MANIFEST
-dist
-build
+/dist/
+/build/
 .pytest_cache
+/*.egg-info
