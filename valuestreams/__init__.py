@@ -142,7 +142,7 @@ def get_df_solution(solution_file, var_list_mps, con_list_mps):
     dfs = gdxpds.to_dataframes(solution_file)
     print('solution read: ' + str(datetime.now() - start))
     start = datetime.now() 
-    dfs = {k.lower(): v for k, v in dfs.items()}
+    dfs = {k.lower(): v for k, v in list(dfs.items())}
     df_vars = get_df_symbols(dfs, var_list_mps)
     df_vars = df_vars.rename(columns={"Level": "var_level", "Marginal": "var_marginal", 'sym_name':'var_name', 'sym_set': 'var_set'})
     df_cons = get_df_symbols(dfs, con_list_mps)
