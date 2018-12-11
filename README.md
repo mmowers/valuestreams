@@ -9,7 +9,7 @@
 
 ## Upgrade package to latest
 1. `pip install --upgrade git+https://github.com/mmowers/valuestreams.git@master`
-    * This command won't work if you installed using `pip install -e...`. Instead, find the location of valuestreams with the `pip list` command at the command line, and then simply navigate to this git repo and pull the latest from git.
+    * This command won't work if you installed using `pip install -e...`. Instead, find the location of the valuestreams package with the `pip list` command at the command line, and then simply navigate to this git repo and pull the latest from git.
 
 ## Uninstall package
 1. `pip uninstall valuestreams`
