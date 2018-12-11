@@ -7,7 +7,7 @@ import pandas as pd
 import gdxpds
 from datetime import datetime
 
-def get_value_streams(solution_file, mps_file, var_list=None):
+def get_value_streams(solution_file, mps_file, var_list=None, con_list=None):
     '''
     Create dataframe of value streams for each variable of interest based on variable coefficients
     in an mps file and constraint and variable marginals in the associated GAMS gdx solution file.
@@ -17,6 +17,9 @@ def get_value_streams(solution_file, mps_file, var_list=None):
         mps_file (string): Full path to the non-presolved mps file of the model associated with the solution file.
         var_list (list of strings): List of lowercased variable names that are of interest. If no list is given, 
             value streams will be created for all variables. If a list is given, variables not on the list will be
+            filtered out.
+        con_list (list of strings): List of lowercased constraint names that are of interest. If no list is given, 
+            value streams will be created for all constraints. If a list is given, constraints not on the list will be
             filtered out.
     Returns:
         df (pandas dataframe): Value streams of variables with these columns:
@@ -32,7 +35,7 @@ def get_value_streams(solution_file, mps_file, var_list=None):
             value_per_unit (float): Value per unit of the variable from that constraint (equal to coeff * var_marginal).
             value (float): Value that is produced by the variable from the constraint (equal to var_level * value_per_unit).
     '''
-    df_mps = get_df_mps(mps_file, var_list)
+    df_mps = get_df_mps(mps_file, var_list, con_list)
     var_list_mps = df_mps['var_name'].unique()
     con_list_mps = df_mps['con_name'].unique()
     dfs_solution = get_df_solution(solution_file, var_list_mps, con_list_mps)
@@ -53,7 +56,7 @@ def get_value_streams(solution_file, mps_file, var_list=None):
     df['value'] = df['value_per_unit']*df['var_level']
     return df
 
-def get_df_mps(mps_file, var_list=None):
+def get_df_mps(mps_file, var_list=None, con_list=None):
     '''
     Create dataframe of coefficients for each variable in each constraint and objective function. Note that all
     strings are lowercased because GAMS is case insensitive.
@@ -61,6 +64,9 @@ def get_df_mps(mps_file, var_list=None):
         mps_file (string): Full path to the non-presolved mps file of the model associated with the solution file.
         var_list (list of strings): List of lowercased variable names that are of interest. If no list is given, 
             value streams will be created for all variables. If a list is given, variables not on the list will be
+            filtered out.
+        con_list (list of strings): List of lowercased constraint names that are of interest. If no list is given, 
+            value streams will be created for all constraints. If a list is given, constraints not on the list will be
             filtered out.
     Returns:
         df (pandas dataframe): Value streams of variables with these columns:
@@ -97,12 +103,12 @@ def get_df_mps(mps_file, var_list=None):
                             ls[i:j+1] = [' '.join(ls[i:j+1])]
                         i = i + 1
                 var_ls = ls[0].split('(')
-                if var_list == None or var_ls[0].lower() in var_list:
+                con_ls = ls[1].split('(')
+                if (var_list == None or var_ls[0].lower() in var_list) and (con_list == None or con_ls[0].lower() in con_list):
                     if len(var_ls) == 1:
                         var_ls.append('')
                     else:
                         var_ls[1] = var_ls[1][:-1].replace('"','').replace("'",'')
-                    con_ls = ls[1].split('(')
                     if len(con_ls) == 1:
                         con_ls.append('')
                     else:

@@ -1,6 +1,7 @@
 ## Install package
 1. Follow instructions to install gdx-pandas and its dependencies: https://github.com/NREL/gdx-pandas#install
 1. Install this package from your command line: `pip install git+https://github.com/mmowers/valuestreams.git@master`
+    * If you are doing development, consider using this instead: `pip install -e git+https://github.com/mmowers/valuestreams.git@master#egg=valuestreams`
 
 ## Use
 1. Import the module in python: `import valuestreams`
@@ -8,6 +9,7 @@
 
 ## Upgrade package to latest
 1. `pip install --upgrade git+https://github.com/mmowers/valuestreams.git@master`
+    * If you are doing development, don't do this command. Simply pull the latest from github.
 
 ## Uninstall package
 1. `pip uninstall valuestreams`
