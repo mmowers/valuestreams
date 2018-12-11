@@ -104,7 +104,7 @@ def get_df_mps(mps_file, var_list=None, con_list=None):
                         i = i + 1
                 var_ls = ls[0].split('(')
                 con_ls = ls[1].split('(')
-                if (var_list == None or var_ls[0].lower() in var_list) and (con_list == None or con_ls[0].lower() in con_list):
+                if (var_list == None or var_ls[0].lower() in var_list) and (con_list == None or con_ls[0].lower() in con_list + ['_obj']):
                     if len(var_ls) == 1:
                         var_ls.append('')
                     else:
