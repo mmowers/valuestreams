@@ -7,4 +7,9 @@ setup(name='valuestreams',
       author='Matt Mowers',
       license='MIT',
       packages=['valuestreams'],
+      install_requires=[
+          'pandas',
+          'gdxpds',
+          'datetime',
+      ],
       zip_safe=False)
