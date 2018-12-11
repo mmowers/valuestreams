@@ -6,6 +6,7 @@
 ## Use
 1. Import the module in python: `import valuestreams`
 1. Call the function `get_value_streams` (with an optional variable list and constraint list to filter results, using *lowercased* variable and constraint names): `df = valuestreams.get_value_streams('path_to_gdx_file.gdx', 'path_to_mps_file', optional_var_list, optional_con_list)`
+    * For more information on inputs and outputs of `get_value_streams()`, see the docstring comment section at the top of this function in `__init__.py`
 
 ## Upgrade package to latest
 1. `pip install --upgrade git+https://github.com/mmowers/valuestreams.git@master`
