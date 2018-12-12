@@ -183,7 +183,10 @@ def get_df_symbols(dfs, symbols):
         level_col = df_sym.columns.get_loc('Level')
         df_sym['sym_set'] = ''
         for s in range(level_col):
-            df_sym['sym_set'] = df_sym['sym_set'] + df_sym.iloc[:,s]
+            set_col = df_sym.iloc[:,s]
+            if set_col.str.contains(".",regex=False).any() or set_col.str.contains("'",regex=False).any() or set_col.str.contains('"',regex=False).any():
+                print('Warning: Invalid character (dot or quote) found in column #' + str(s) + ' of ' + sym_name)
+            df_sym['sym_set'] = df_sym['sym_set'] + set_col
             if s < level_col - 1:
                 df_sym['sym_set'] = df_sym['sym_set'] + '.'
         #remove set columns
