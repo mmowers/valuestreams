@@ -5,6 +5,7 @@ from GAMS gdx solution file to produce value streams for the variables of the mo
 
 import pandas as pd
 import gdxpds
+import re
 from datetime import datetime
 
 def get_value_streams(solution_file, mps_file, var_list=None, con_list=None):
@@ -83,6 +84,7 @@ def get_df_mps(mps_file, var_list=None, con_list=None):
     start = datetime.now()
     mps_ls = []
     columns = False
+    rows = True
     with open(mps_file) as mpsfile:
         for line in mpsfile:
             if columns:
@@ -90,38 +92,39 @@ def get_df_mps(mps_file, var_list=None, con_list=None):
                     break
                 if line[:8] == '    MARK':
                     continue
-                #split on whitespace
-                ls = line.split()
-                if len(ls) > 3:
-                    #This means there was whitespace in one of the set elements. We need to recombine list elements.
-                    i = 0
-                    while i < len(ls):
-                        if '(' in ls[i] and ')' not in ls[i]:
-                            j = i
-                            while ')' not in ls[j]:
-                                j = j + 1
-                            ls[i:j+1] = [' '.join(ls[i:j+1])]
-                        i = i + 1
-                var_ls = ls[0].split('(')
-                con_ls = ls[1].split('(')
+                #split three sections apart using the width of the first column, var_str_len, and working backwards from the end of the line.
+                var_str = line[:var_str_len].strip()
+                coeff = re.search(r"[^ ]+$", line).group(0)
+                con_str = line[var_str_len:len(line)-len(coeff)].strip()
+                coeff = float(coeff.strip())
+                #Now for var_str and con_str, separate the name from the sets.
+                var_ls = get_ls(var_str)
+                con_ls = get_ls(con_str)
                 if (var_list == None or var_ls[0].lower() in var_list) and (con_list == None or con_ls[0].lower() in con_list + ['_obj']):
-                    if len(var_ls) == 1:
-                        var_ls.append('')
-                    else:
-                        var_ls[1] = var_ls[1][:-1].replace('"','').replace("'",'')
-                    if len(con_ls) == 1:
-                        con_ls.append('')
-                    else:
-                        con_ls[1] = con_ls[1][:-1].replace('"','').replace("'",'')
-                    mps_ls.append(var_ls + con_ls + [float(ls[2])])
+                    mps_ls.append(var_ls + con_ls + [coeff])
             elif line[:7] == 'COLUMNS':
                 columns = True
+            elif line[:4] == 'ROWS':
+                rows = True
+            elif rows:
+                var_str_len = len(line)
+                rows = False
     df_mps = pd.DataFrame(mps_ls)
     df_mps.columns = ['var_name','var_set','con_name','con_set', 'coeff']
     for col in ['var_name','var_set','con_name','con_set']:
         df_mps[col] = df_mps[col].str.lower()
     print('mps read: ' + str(datetime.now() - start))
     return df_mps
+
+def get_ls(str_in):
+    if str_in.endswith(')'):
+        #this means we have both a name and set list. So we separate the name from the set list,
+        #and for the set list we remove quotes
+        ls_out = [re.match(r"[^(]+", str_in).group(0)]
+        ls_out.append(str_in[len(ls_out[0])+1:len(str_in)-1].replace("'","").replace('"',''))
+    else:
+        ls_out = [str_in, '']
+    return ls_out
 
 def get_df_solution(solution_file, var_list_mps, con_list_mps):
     '''
