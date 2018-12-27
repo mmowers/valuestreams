@@ -92,7 +92,9 @@ def get_df_mps(mps_file, var_list=None, con_list=None):
                     break
                 if line[:8] == '    MARK':
                     continue
-                #split three sections apart using the width of the first column, var_str_len, and working backwards from the end of the line.
+                #split three sections apart using the width of the first column, var_str_len, to separate
+                #the variable section from the constraint section, and working backwards from the end of the line
+                #to find the first space character, separating the coefficient section from the constraint section.
                 var_str = line[:var_str_len].strip()
                 coeff = re.search(r"[^ ]+$", line).group(0)
                 con_str = line[var_str_len:len(line)-len(coeff)].strip()
@@ -165,11 +167,13 @@ def get_df_symbols(dfs, symbols):
     Note that all strings are lowercased because GAMS is case insensitive.
     Args:
         dfs (dict of pandas dataframes): A result of gdxpds.to_dataframes(), with keys lowercased.
+            Dataframes of gdxpds.to_dataframes() always have separate columns for each set,
+            followed by Level, Marginal, Lower, Upper, and Scale columns.
         symbols (list of strings): List of lowercased symbol names that are of interest.
     Returns:
         df_syms (pandas dataframe): dataframe of symbol levels and marginals with these columns:
-            sym_name (string): Name of symbol.
-            sym_set (string): Period-seperated sets of the symbol.
+            sym_name (string): Name of symbol, lowercased
+            sym_set (string): Period-seperated sets of the symbol, lowercased
             Level (float): Level of the symbol in the solution.
             Marginal (float): Marginal of the symbol in the solution.
     '''
@@ -189,10 +193,8 @@ def get_df_symbols(dfs, symbols):
             df_sym['sym_set'] = df_sym['sym_set'] + set_col
             if s < level_col - 1:
                 df_sym['sym_set'] = df_sym['sym_set'] + '.'
-        #remove set columns
-        df_sym = df_sym.iloc[:,level_col:]
-        #remove lower upper scale
-        df_sym = df_sym.drop(['Lower', 'Upper', 'Scale'], axis=1)
+        #reduce to only the columns of interest
+        df_sym = df_sym[['sym_name','sym_set','Level','Marginal']]
         df_syms.append(df_sym)
     df_syms = pd.concat(df_syms).reset_index(drop=True)
     for col in ['sym_name','sym_set']:
