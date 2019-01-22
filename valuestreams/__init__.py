@@ -16,10 +16,10 @@ def get_value_streams(solution_file, mps_file, var_list=None, con_list=None):
     Args:
         solution_file (string): Full path to GAMS gdx solution file.
         mps_file (string): Full path to the non-presolved mps file of the model associated with the solution file.
-        var_list (list of strings): List of lowercased variable names that are of interest. If no list is given, 
+        var_list (list of strings): List of lowercased variable names that are of interest. If no list is given,
             value streams will be created for all variables. If a list is given, variables not on the list will be
             filtered out.
-        con_list (list of strings): List of lowercased constraint names that are of interest. If no list is given, 
+        con_list (list of strings): List of lowercased constraint names that are of interest. If no list is given,
             value streams will be created for all constraints. If a list is given, constraints not on the list will be
             filtered out.
     Returns:
@@ -63,10 +63,10 @@ def get_df_mps(mps_file, var_list=None, con_list=None):
     strings are lowercased because GAMS is case insensitive.
     Args:
         mps_file (string): Full path to the non-presolved mps file of the model associated with the solution file.
-        var_list (list of strings): List of lowercased variable names that are of interest. If no list is given, 
+        var_list (list of strings): List of lowercased variable names that are of interest. If no list is given,
             value streams will be created for all variables. If a list is given, variables not on the list will be
             filtered out.
-        con_list (list of strings): List of lowercased constraint names that are of interest. If no list is given, 
+        con_list (list of strings): List of lowercased constraint names that are of interest. If no list is given,
             value streams will be created for all constraints. If a list is given, constraints not on the list will be
             filtered out.
     Returns:
